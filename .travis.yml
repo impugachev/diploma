@@ -1,0 +1,14 @@
+language: generic
+
+services:
+  - docker
+
+script:
+  - docker run --rm -it -v $TRAVIS_BUILD_DIR:/home danteev/texlive latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error document.tex
+
+deploy:
+  provider: releases
+  api_key: $GH_TOKEN
+  file: document.pdf
+  skip_cleanup: true
+  draft: true
