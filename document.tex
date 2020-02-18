@@ -72,9 +72,14 @@
 
 \usepackage{fontspec}
   \defaultfontfeatures{Mapping=tex-text}
-  \setmainfont{CMU Serif}
-  \setsansfont{CMU Sans Serif}
-  \setmonofont{CMU Typewriter Text}
+  \setmainfont{cmunrm.otf}[%
+  Ligatures = TeX,
+  BoldFont = cmunrb.otf,
+  ItalicFont = cmunti.otf,
+  BoldItalicFont = cmunbi.otf,
+]%
+  \setsansfont{cmunss.otf}
+  \setmonofont{cmuntt.otf}
 
 \usepackage[backend=biber]{biblatex}
   \addbibresource{document.bib}
