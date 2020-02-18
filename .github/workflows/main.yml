@@ -8,5 +8,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v1
     - uses: vinay0410/tectonic-action@v1.1.2
       name: Compile LateX
+      with:
+        tex_path: 'document.tex'
