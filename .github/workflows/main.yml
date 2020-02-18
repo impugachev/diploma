@@ -9,4 +9,4 @@ jobs:
 
     steps:
     - uses: vinay0410/tectonic-action@v1.1.2
-    - name: Compile LateX
+      name: Compile LateX
