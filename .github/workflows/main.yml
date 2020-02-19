@@ -16,3 +16,9 @@ jobs:
         root_file: document.tex
         # Extra arguments to be passed to the latex compiler
         args: -xelatex -latexoption=-file-line-error -latexoption=-interaction=nonstopmode
+    - name: Upload the artifacts
+      uses: skx/github-action-publish-binaries@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        args: 'example-*'
