@@ -66,13 +66,13 @@
 
 \usepackage{csquotes}
 \usepackage{polyglossia}
-  \setmainlanguage[spelling=modern]{russian}
+  \setmainlanguage{russian}
+  \setdefaultlanguage[spelling=modern]{russian}
   \setotherlanguage{english}
   \newcommand{\EN}[1]{\foreignlanguage{english}{#1}}
-\defaultfontfeatures{Mapping=tex-text}
-\setmainfont{CMU Serif}
-\setsansfont{CMU Sans Serif}
-\setmonofont{CMU Typewriter Text}
+  \setmainfont{CMU Serif Roman}
+  \setsansfont{CMU Sans Serif}
+  \setmonofont{CMU Typewriter Text}
 
 \usepackage[backend=biber]{biblatex}
   \addbibresource{document.bib}
