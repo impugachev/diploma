@@ -66,20 +66,13 @@
 
 \usepackage{csquotes}
 \usepackage{polyglossia}
+  \setmainlanguage{russian}
   \setdefaultlanguage[spelling=modern]{russian}
   \setotherlanguage{english}
   \newcommand{\EN}[1]{\foreignlanguage{english}{#1}}
-
-\usepackage{fontspec}
-  \defaultfontfeatures{Mapping=tex-text}
-  \setmainfont{cmunrm.otf}[%
-  Ligatures = TeX,
-  BoldFont = cmunrb.otf,
-  ItalicFont = cmunti.otf,
-  BoldItalicFont = cmunbi.otf,
-]%
-  \setsansfont{cmunss.otf}
-  \setmonofont{cmuntt.otf}
+  \setmainfont{CMU Serif Roman}
+  \setsansfont{CMU Sans Serif}
+  \setmonofont{CMU Typewriter Text}
 
 \usepackage[backend=biber]{biblatex}
   \addbibresource{document.bib}
