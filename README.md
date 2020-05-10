@@ -1,3 +1,6 @@
 # diploma
 [![Build Status](https://travis-ci.com/impugachev/diploma.svg?branch=master)](https://travis-ci.com/impugachev/diploma)
-на самом деле пока НИР
+
+Тема: Система распределения вычислений на высокопроизводительном кластере при решении задач численного моделирования
+
+Код: https://github.com/impugachev/rpc-cluster
