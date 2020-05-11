@@ -1,0 +1,45 @@
+#include <boost/interprocess/shared_memory_object.hpp>
+#include <boost/interprocess/mapped_region.hpp>
+#include <string>
+#include <cstdint>
+
+int main(int argc, char *argv[])
+{
+    using namespace boost::interprocess;
+
+    if (argc == 1) // если процесс - родитель
+    {
+        // элементарная RAII-обертка
+        struct shm_remove
+        {
+            shm_remove() { shared_memory_object::remove("MySharedMemory"); }
+            ~shm_remove() { shared_memory_object::remove("MySharedMemory"); }
+        } remover;
+        // создаем общую память
+        shared_memory_object shm(create_only, "MySharedMemory", read_write);
+        // устанавливаем ее размер
+        shm.truncate(1000);
+        // отображаем общую память в память процесса
+        mapped_region region(shm, read_write);
+        // пишем единицы в общую память
+        std::memset(region.get_address(), 1, region.get_size());
+        // запускаем дочерний процесс
+        std::string s(argv[0]);
+        s += " child ";
+        if (std::system(s.c_str()) != 0)
+            return 1; // не удалось создать процесс
+    }
+    else // если процесс - дочерний
+    {
+        // открываем созданную процессом родителем общую память
+        shared_memory_object shm(open_only, "MySharedMemory", read_only);
+        // отображаем общую память в память процесса
+        mapped_region region(shm, read_only);
+        // проверяем, что вся память проинициализирована единицами
+        auto mem = static_cast<uint8_t*>(region.get_address());
+        for (std::size_t i = 0; i < region.get_size(); ++i)
+            if (*mem++ != 1)
+                return 1; // ошибка проверки
+    }
+    return 0;
+}
