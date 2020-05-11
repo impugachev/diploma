@@ -1,0 +1,3 @@
+[submodule "rpc-cluster"]
+	path = rpc-cluster
+	url = https://github.com/impugachev/rpc-cluster
