@@ -115,6 +115,10 @@
 	extendedchars=\true,
   inputencoding=utf8x,
   texcl=true,
+  columns=fullflexible,
+  %frame=single,
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
   literate=
 	{\{}{{{\color{brackets}\{}}}1 % Цвет скобок {
 	{\}}{{{\color{brackets}\}}}}1 % Цвет скобок }
@@ -235,7 +239,7 @@ OpenMP (Open Multi-Processing) — открытый стандарт для ра
 \lstinputlisting[language=c++, caption={Реализация параллельного алгоритма Гаусса-Зейделя на OpenMP}]{source/openmp.cpp}
 
 Понадобилась всего две строчки с директивами препроцессора OpenMP, чтобы векторизовать цикл расчета значения функции в узлах. Если убрать их, то мы получим последовательную реализацию алгоритма. Этот способ намного проще библиотеки thread и позволяет избежать накладных расходов.
-\section{Реализация для систем с распределенной памятью}
+\subsection{Реализация для систем с распределенной памятью}
 Для таких систем характерно наличие собственной приватной памяти у каждого процессора. Примером такой системы может послужить суперкомпьютер: несколько отдельных компьютеров, соединенных в высокоскоростную сеть. Для обмена информации между процессорами используется специальный интерфейс -- \EN{Message Passing Interface} (MPI, интерфейс передачи сообщений). Интерфейс позволяет передавать сообщения между процессорами, а разделение работы происходит посредством определения номера процессора и исполнения соответствующего кода.
 
 \lstinputlisting[language=c++, caption={Пример MPI-программы}]{source/mpi.cpp}
@@ -245,14 +249,14 @@ OpenMP (Open Multi-Processing) — открытый стандарт для ра
 	\center{\includegraphics[width=0.5\linewidth]{wave_block}}
 	\caption{Блочно-волновой алгоритм}
 \end{figure}
-\subsection{Boost.MPI}
+\subsubsection{Boost.MPI}
 Библиотека \EN{MPI} предоставляет лишь примитивный интерфейс\\языка программирования \EN{C}, и многие вещи приходится делать вручную: инициализация и деинициализация окружения, передача сложных структур данных и прочее. Из-за этого сложность больших программ увеличивается, и вероятность появления труднонаходимых багов повышается. Поэтому для своей реализации алгоритма Гаусса-Зейделя я буду использовать библиотеку \EN{Boost.MPI} -- C++ обертку над MPI. Благодаря ей многие вещи становится гораздо проще написать. 
 
 \lstinputlisting[language=c++, caption={Использование Boost.MPI}]{source/boost_mpi.cpp}
 
 Самое главное достоинство Boost.MPI в том, что она позволяет использовать библиотеку \EN{Boost.Serialization} для отправки сложных структур данных. Чтобы структура стала сериализуемой достаточно определить у нее метод serialize, все остальное произойдет автоматически. Структуры из библиотеки Boost.uBLAS, такие как матрицы и вектора, уже имеют этот метод, что сильно упрощает процедуру обмена строк, необходимую для реализации алгоритма.
 
-\section{Реализация в смешанных системах}
+\subsection{Реализация в смешанных системах}
 Рассмотрим подробнее архитектуру суперкомпьютера. Компьютеры объединены в систему с разделенной памятью с помощью сети. Каждый компьютер в такой сети представляет из себя многоядерный процессор, т.е. систему с общей памятью. Таким образом, в общем случае, суперкомпьютер является смешанной системой: система с разделенной памятью с подсистемами с общей памятью. В таких условиях использование OpenMP возможно только в рамках одной подсистемы, а использование MPI влечет за собой накладные расходы из-за пересылок сообщений внутри одной подсистемы между ядрами одного процессора. 
 \begin{figure}[H]
 	\center{\includegraphics[width=0.75\linewidth]{cluster_arch}}
@@ -468,11 +472,36 @@ Boost.Process может осуществлять только синхронн�
 \printbibliography
 \chapter*{Приложение 1. Исходный код параллельной реализации алгоритма Гаусса-Зейделя}
 \addcontentsline{toc}{chapter}{Приложение 1. Исходный код параллельной реализации алгоритма Гаусса-Зейделя}
-
+\lstinputlisting[language=c++, caption={Файл main.cpp}]{rpc-cluster/math/my/src/main.cpp}
 \chapter*{Приложение 2. Исходный код сервера удаленного вызова процедур}
 \addcontentsline{toc}{chapter}{Приложение 2. Исходный код сервера удаленного вызова процедур}
-
+\lstinputlisting[language=protobuf3, caption={Файл cluster.proto}]{rpc-cluster/cluster.proto}
+\lstinputlisting[language=c++, caption={Файл cluster.cpp}]{rpc-cluster/server_cpp/src/cluster.cpp}
+\lstinputlisting[language=c++, caption={Файл ControlServiceImpl.cpp}]{rpc-cluster/server_cpp/src/ControlServiceImpl.cpp}
+\lstinputlisting[language=c++, caption={Файл ControlServiceImpl.h}]{rpc-cluster/server_cpp/src/ControlServiceImpl.h}
+\lstinputlisting[language=c++, caption={Файл FromChars.h}]{rpc-cluster/server_cpp/src/FromChars.h}
+\lstinputlisting[language=c++, caption={Файл IOutputStream.h}]{rpc-cluster/server_cpp/src/IOutputStream.h}
+\lstinputlisting[language=c++, caption={Файл ITaskManager.h}]{rpc-cluster/server_cpp/src/ITaskManager.h}
+\lstinputlisting[language=c++, caption={Файл Logger.h}]{rpc-cluster/server_cpp/src/Logger.h}
+\lstinputlisting[language=c++, caption={Файл OuputStreamAdapter.h}]{rpc-cluster/server_cpp/src/OuputStreamAdapter.h}
+\lstinputlisting[language=c++, caption={Файл Point.h}]{rpc-cluster/server_cpp/src/Point.h}
+\lstinputlisting[language=c++, caption={Файл RpcPointsStream.cpp}]{rpc-cluster/server_cpp/src/RpcPointsStream.cpp}
+\lstinputlisting[language=c++, caption={Файл RpcPointsStream.h}]{rpc-cluster/server_cpp/src/RpcPointsStream.h}
+\lstinputlisting[language=c++, caption={Файл RpcServer.cpp}]{rpc-cluster/server_cpp/src/RpcServer.cpp}
+\lstinputlisting[language=c++, caption={Файл RpcServer.h}]{rpc-cluster/server_cpp/src/RpcServer.h}
+\lstinputlisting[language=c++, caption={Файл SlurmTask.cpp}]{rpc-cluster/server_cpp/src/SlurmTask.cpp}
+\lstinputlisting[language=c++, caption={Файл SlurmTask.h}]{rpc-cluster/server_cpp/src/SlurmTask.h}
+\lstinputlisting[language=c++, caption={Файл SlurmTaskManager.cpp}]{rpc-cluster/server_cpp/src/SlurmTaskManager.cpp}
+\lstinputlisting[language=c++, caption={Файл SlurmTaskManager.h}]{rpc-cluster/server_cpp/src/SlurmTaskManager.h}
+\lstinputlisting[language=c++, caption={Файл StartTaskCall.cpp}]{rpc-cluster/server_cpp/src/StartTaskCall.cpp}
+\lstinputlisting[language=c++, caption={Файл StartTaskCall.h}]{rpc-cluster/server_cpp/src/StartTaskCall.h}
+\lstinputlisting[language=c++, caption={Файл SuspendResume.h}]{rpc-cluster/server_cpp/src/SuspendResume.h}
+\lstinputlisting[language=c++, caption={Файл posix/SuspendResume.cpp}]{rpc-cluster/server_cpp/src/native/posix/SuspendResume.cpp}
+\lstinputlisting[language=c++, caption={Файл windows/SuspendResume.cpp}]{rpc-cluster/server_cpp/src/native/windows/SuspendResume.cpp}
 \chapter*{Приложение 3. Исходный код графического клиента}
 \addcontentsline{toc}{chapter}{Приложение 3. Исходный код графического клиента}
-
+\lstinputlisting[language=python, caption={Файл client.py}]{rpc-cluster/client_python/client.py}
+\lstinputlisting[language=xml, caption={Файл main\_window.ui}]{rpc-cluster/client_python/main_window.ui}
+\lstinputlisting[language=python, caption={Файл param\_table.py}]{rpc-cluster/client_python/param_table.py}
+\lstinputlisting[language=python, caption={Файл suspend\_button.py}]{rpc-cluster/client_python/suspend_button.py}
 \end{document}
