@@ -20,8 +20,7 @@ std::thread([this, &callback]()
         callback();
 }).detach();
 
-// ...
-// функция обратного вызова, вызываемая при получении очередной порции данных
+// функция, вызываемая при получении очередной порции данных
 m_readHandler = 
     [this](const boost::system::error_code& e, std::size_t size)
     {
@@ -31,8 +30,8 @@ m_readHandler =
             m_stream->CloseStream();
             return;
         }
-        // перенаправление прочитанных данных для дальней его отправки RPC-клиенту
+        // перенаправление прочитанных данных для отправки RPC-клиенту
         (*m_stream) << ReadPointsFromBuffer();
         // заново ставим callback на чтение
-        boost::asio::async_read_until(m_pipe, m_buffer, '\n', m_readHandler);
+        boost::asio::async_read_until(m_pipe,m_buffer, '\n', m_readHandler);
     };

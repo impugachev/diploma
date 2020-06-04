@@ -29,17 +29,4 @@ int main(int argc, char *argv[])
         if (std::system(s.c_str()) != 0)
             return 1; // не удалось создать процесс
     }
-    else // если процесс - дочерний
-    {
-        // открываем созданную процессом родителем общую память
-        shared_memory_object shm(open_only, "MySharedMemory", read_only);
-        // отображаем общую память в память процесса
-        mapped_region region(shm, read_only);
-        // проверяем, что вся память проинициализирована единицами
-        auto mem = static_cast<uint8_t*>(region.get_address());
-        for (std::size_t i = 0; i < region.get_size(); ++i)
-            if (*mem++ != 1)
-                return 1; // ошибка проверки
-    }
-    return 0;
 }
