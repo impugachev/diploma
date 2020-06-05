@@ -228,14 +228,6 @@
   \item Выполнить программную реализацию разработанного алгоритма и основанной на нём системы распределения вычислений, выполняющей все этапы – от ввода данных до вывода результата.
 \end{enumerate}
 В ходе данной работы было проведено исследование путей повышения эффективности вычислений при решении задач численного моделирования на высокопроизводительном кластере и была реализована полноценная система распределенных вычислений.
-
-Была решена задача Дирихле уравнения Пуассона с помощью метода конечных разностей. Получившаяся система линейных алгебраических уравнений была решена с помощью метода Гаусса-Зейделя, параллельная реализация которого была разработана с совместным использованием технологий OpenMP и MPI. Для сравнения производительности были построены еще три версии алгоритма: последовательный, только OpenMP и только MPI.
-
-Также был реализован сервер удаленного вызова процедур с использованием библиотеки gRPC. Для коммуникации между численной моделью и сервером была использована технология межроцессного взаимодействия, которая была реализована на основе использования неименованного канала с применением библиотек Boost.Process и Boost.Asio.
-
-В качестве интерфейса пользователя было разработано кроссплатформенное графическое приложение на языке Python с использованием библиотек Qt, matplotlib и gRPC.
-
-
 \EN{
   %\linespread{1.5}
   \chapter*{ABSTRACT}
@@ -255,12 +247,6 @@
   \end{enumerate}
 
   In the course of this work, a study was conducted of ways to increase the efficiency of calculations in solving problems of numerical modeling on a high-performance cluster and a complete system of distributed computing was implemented.
-
-  The Dirichlet problem of the Poisson equation was solved using the finite difference method. The resulting system of linear algebraic equations was solved using the Gauss-Seidel method, a parallel implementation of which was developed with the combined use of OpenMP and MPI technologies. To compare performance, three more versions of the algorithm were built: serial, only OpenMP and only MPI.
-
-  A remote procedure call server was also implemented using the gRPC library. For communication between the numerical model and the server, the interprocess communication technology was used, which was implemented using an unnamed channel using the Boost.Process and Boost.Asio libraries.
-
-  As a user interface, a cross-platform graphical application in Python was developed using the Qt, matplotlib and gRPC libraries.
 }
 \newpage
 \tableofcontents
