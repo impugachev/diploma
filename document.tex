@@ -104,21 +104,23 @@
 \usepackage{url}
 \usepackage[
   backend=biber, 
-  bibstyle=authoryear, 
+  bibstyle=gost-numeric, 
   citestyle=numeric, 
   sorting=debug]{biblatex}
-  \renewcommand*{\multicitedelim}{\addsemicolon\space}
+%  \renewcommand*{\multicitedelim}{\addsemicolon\space}
   \defbibenvironment{bibliography}
   {\list
     {\printfield[labelnumberwidth]{labelnumber}}
     {\setlength{\labelwidth}{\labelnumberwidth}%
       \setlength{\leftmargin}{0pt}%
-      \setlength{\labelsep}{0pt}%
+      \setlength{\labelsep}{\the\fontdimen2\font}%
       \setlength{\itemsep}{\bibitemsep}%
       \setlength{\itemindent}{1.25cm}%
       \addtolength{\itemindent}{\labelsep}%
-      \setlength{\parsep}{\bibparsep}}%
-    \renewcommand*{\makelabel}[1]{\hss##1. }}
+      \setlength{\parsep}{\bibparsep}
+      }%
+    %\renewcommand*{\makelabel}[1]{\hss##1. }
+    }
   {\endlist}
   {\item}
   \addbibresource{document.bib}
@@ -151,17 +153,17 @@
 \makeatother
   \titleclass{\chapter}{straight}
   \titleformat{\chapter}{\normalfont\bfseries\filcenter}{ГЛАВА \thechapter. }{0mm}{}
-  \titlecontents{chapter}[0mm]{\normalfont\bfseries}{ГЛАВА \thecontentslabel. }{}{\titlerule*[.75em]{.}\contentspage}
+  \titlecontents{chapter}[0mm]{\normalfont}{ГЛАВА \thecontentslabel. }{}{\titlerule*[.75em]{.}\contentspage}
   \titleformat{\section}{\normalfont\bfseries\filcenter}{\thesection. }{0mm}{}
   \titlecontents{section}[0mm]{\normalfont}{\hspace{1.25cm}\thecontentslabel. }{}{\titlerule*[.75em]{.}\contentspage}
   \titleformat{\subsection}{\normalfont\filcenter}{\thesubsection. }{0mm}{}
   \titlecontents{subsection}[0mm]{\normalfont}{\hspace{2.5cm}\thecontentslabel. }{}{\titlerule*[.75em]{.}\contentspage}
   \titleformat{\subsubsection}{\normalfont\itshape\filcenter}{\thesubsubsection}{0mm}{}
 
-  \titlespacing*{\chapter}{0mm}{0mm}{14pt}
-  \titlespacing*{\section}{0mm}{0mm}{14pt}
-  \titlespacing*{\subsection}{0mm}{0mm}{14pt}
-  \titlespacing*{\subsubsection}{0mm}{0mm}{14pt}
+  \titlespacing*{\chapter}{0mm}{14pt}{14pt}
+  \titlespacing*{\section}{0mm}{14pt}{14pt}
+  \titlespacing*{\subsection}{0mm}{14pt}{14pt}
+  \titlespacing*{\subsubsection}{0mm}{14pt}{14pt}
   
 
 \addto\captionsrussian{\renewcommand{\contentsname}{СОДЕРЖАНИЕ}}
@@ -176,14 +178,92 @@
 \usepackage{cleveref}
 \usepackage{placeins}
 
-\begin{document}
-\nocite{*}
-\tableofcontents
+\newcommand*\EmptyPage{\newpage\null\thispagestyle{empty}\newpage}
+
+\usepackage{totcount}
+  \newcounter{totfigures}
+  \newcounter{tottables}
+
+  \providecommand\totfig{} 
+  \providecommand\tottab{}
+
+  \makeatletter
+  \AtEndDocument{%
+    \addtocounter{totfigures}{\value{figure}}%
+    \addtocounter{tottables}{\value{table}}%
+    \immediate\write\@mainaux{%
+      \string\gdef\string\totfig{\number\value{totfigures}}%
+      \string\gdef\string\tottab{\number\value{tottables}}%
+    }%
+  }
+  \makeatother
+
+  \pretocmd{\chapter}{\addtocounter{totfigures}{\value{figure}}\setcounter{figure}{0}}{}{}
+  \pretocmd{\chapter}{\addtocounter{tottables}{\value{table}}\setcounter{table}{0}}{}{}
+  \regtotcounter{page}
+
+\usepackage{setspace}
+  \onehalfspacing
+
 
 \setlength{\parindent}{1.25cm}
-%\setlength{\parskip}{1.25em}
-\linespread{1.5}
 
+\begin{document}
+\nocite{*}
+\EmptyPage %титульный лист
+\EmptyPage\EmptyPage %задание
+\newpage
+\chapter*{РЕФЕРАТ}
+На \total{page} с., \totfig\ рисунков, \tottab\ таблицы, 3 приложения.
+
+КЛЮЧЕВЫЕ СЛОВА: КЛАСТЕР, УДАЛЕННЫЙ ВЫЗОВ ПРОЦЕДУР, ПАРАЛЛЕЛЬНЫЕ ВЫЧИСЛЕНИЯ, \EN{MPI, OPENMP}, ЗАДАЧА ДИРИХЛЕ, УРАВНЕНИЕ ПУАССОНА, МЕЖПРОЦЕССНОЕ ВЗАИМОДЕЙСТВИЕ.
+
+Тема выпускной квалификационной работы: <<Система распределения вычислений на высокопроизводительном кластере при решении задач численного моделирования>>.
+
+Данная работа посвящена исследованию путей повышения эффективности вычислений при решении задач численного моделирования на высокопроизводительном кластере. Задачи, которые решались в ходе исследования:
+\begin{enumerate}
+  \item Исследовать существующие методы и алгоритмы распределения вычислений на высокопроизводительном кластере.
+  \item Разработать эффективный параллельный алгоритм решения задачи численного моделирования на примере задачи Дирихле.
+  \item Провести экспериментальные исследования разработанного решения со сравнительным анализом результатов для различных реализаций распределения.
+  \item Выполнить программную реализацию разработанного алгоритма и основанной на нём системы распределения вычислений, выполняющей все этапы – от ввода данных до вывода результата.
+\end{enumerate}
+В ходе данной работы было проведено исследование путей повышения эффективности вычислений при решении задач численного моделирования на высокопроизводительном кластере и была реализована полноценная система распределенных вычислений.
+
+Была решена задача Дирихле уравнения Пуассона с помощью метода конечных разностей. Получившаяся система линейных алгебраических уравнений была решена с помощью метода Гаусса-Зейделя, параллельная реализация которого была разработана с совместным использованием технологий OpenMP и MPI. Для сравнения производительности были построены еще три версии алгоритма: последовательный, только OpenMP и только MPI.
+
+Также был реализован сервер удаленного вызова процедур с использованием библиотеки gRPC. Для коммуникации между численной моделью и сервером была использована технология межроцессного взаимодействия, которая была реализована на основе использования неименованного канала с применением библиотек Boost.Process и Boost.Asio.
+
+В качестве интерфейса пользователя было разработано кроссплатформенное графическое приложение на языке Python с использованием библиотек Qt, matplotlib и gRPC.
+
+
+\EN{
+  %\linespread{1.5}
+  \chapter*{ABSTRACT}
+  \total{page} pages, \totfig\ figures, \tottab\ tables, 3 appendices.
+
+  KEYWORDS: CLUSTER, PARALLEL COMPUTING, REMOTE PROCEDURE CALL, INTERPROCESS COMMUNICATION, MPI, OPENMP, DIRICHLET PROBLEM, POISSON EQUATION.
+
+  The subject of the graduate qualification work is "The distribution system of calculations on a high-performance cluster in solving problems of numerical simulation".
+
+  The given work is devoted to studying of ways to increase the efficiency of calculations in solving problems of numerical modeling on a high-performance cluster. The research set the following goals:
+
+  \begin{enumerate}
+    \item Explore existing methods and algorithms for distributing computations on a high-performance cluster.
+    \item Develop an effective parallel algorithm for solving the problem of numerical simulation using the Dirichlet problem as an example.
+    \item Conduct experimental studies of the developed solution with a comparative analysis of the results for various distribution implementations.
+    \item Execute the software implementation of the developed algorithm and the calculation distribution system based on it, which performs all stages - from data input to output.
+  \end{enumerate}
+
+  In the course of this work, a study was conducted of ways to increase the efficiency of calculations in solving problems of numerical modeling on a high-performance cluster and a complete system of distributed computing was implemented.
+
+  The Dirichlet problem of the Poisson equation was solved using the finite difference method. The resulting system of linear algebraic equations was solved using the Gauss-Seidel method, a parallel implementation of which was developed with the combined use of OpenMP and MPI technologies. To compare performance, three more versions of the algorithm were built: serial, only OpenMP and only MPI.
+
+  A remote procedure call server was also implemented using the gRPC library. For communication between the numerical model and the server, the interprocess communication technology was used, which was implemented using an unnamed channel using the Boost.Process and Boost.Asio libraries.
+
+  As a user interface, a cross-platform graphical application in Python was developed using the Qt, matplotlib and gRPC libraries.
+}
+\newpage
+\tableofcontents
 \newpage
 \chapter*{ВВЕДЕНИЕ}
 \addcontentsline{toc}{chapter}{ВВЕДЕНИЕ}
@@ -234,7 +314,7 @@ $f=f(x,y)$ - заданная функция.\\
 \begin{equation*}
   D=\{(x,y) \in D: 0 \le x,y \le 1\}
 \end{equation*}
-Дискретизируем систему, применив метод конечных разностей, также называемый методом сеток (\cref{grid_method}).
+Дискретизируем систему, применив метод конечных разностей~\cite{1ustinov_math}, также называемый методом сеток (\cref{grid_method}).
 \begin{equation*}
   \begin{cases}
     D_h=\{(x_i,y_j): x_i=ih, y_j=jh, 0 \le i,j \le N+1\}\\
@@ -258,7 +338,7 @@ $f=f(x,y)$ - заданная функция.\\
 \end{equation*}
 Таким образом, задача сводится к решению системы линейных алгебраических уравнений
 \subsection{Методы решения СЛАУ}
-Рассмотрим методы решения СЛАУ и возможность их параллельной реализации.
+Рассмотрим методы решения СЛАУ~\cite{1ustinov_math} и возможность их параллельной реализации.
 \refstepcounter{subsubsection}
 \subsubsection*{\thesubsubsection. Метод Якоби}
 Применив метод Якоби к описанной выше задаче получим:
@@ -281,10 +361,10 @@ $f=f(x,y)$ - заданная функция.\\
 \end{figure}
 \FloatBarrier
 \subsection{Средства реализации параллельного алгоритма}
-В качестве языка программирования был выбран C++ как один из самых производительных, что важно для сложных вычислений. В реализации алгоритма необходимо будет воспользоваться такими объектами линейной алгебры, как матрицы и вектора. Средствами стандартной библиотеки их можно представить разве что в виде двумерного массива, использование которого требует выполнение всех примитивных операций вручную, что увеличивает вероятность возникновения ошибок реализации. Здесь на помощь приходит библиотека линейной алгебры Boost.uBLAS, предоставляющая простой и понятный интерфейс для большого числа операций. Пример использования библиотеки представлен на \cref{ublas}.
+В качестве языка программирования был выбран C++ как один из самых производительных, что важно для сложных вычислений. В реализации алгоритма необходимо будет воспользоваться такими объектами линейной алгебры, как матрицы и вектора. Средствами стандартной библиотеки их можно представить разве что в виде двумерного массива, использование которого требует выполнение всех примитивных операций вручную, что увеличивает вероятность возникновения ошибок реализации. Здесь на помощь приходит библиотека линейной алгебры Boost.uBLAS~\cite{3boost}, предоставляющая простой и понятный интерфейс для большого числа операций. Пример использования библиотеки представлен на \cref{ublas}.
 \begin{figure}[H]
   \lstinputlisting[language=c++]{source/ublas.cpp}
-  \caption{Листинг. Пример использования библиотеки Boost.uBLAS}
+  \caption{Листинг. Пример использования библиотеки Boost.uBLAS~\cite{3boost}}
   \label{ublas}
 \end{figure}
 
@@ -293,12 +373,12 @@ $f=f(x,y)$ - заданная функция.\\
 \subsubsection*{\thesubsubsection. Системы с общей памятью}
 В таких системах все процессоры обращаются к общей для всех процессоров памяти. Примером такой системы может послужить любой персональный компьютер: все ядра процессора обращаются к общей оперативной памяти и могут читать/писать в одни и те же ячейки памяти. Рассмотрим способы реализации параллельных алгоритмов в таких системах.
 
-Очевидный способ - использовать стандартную библиотеку языка программирования C++. Библиотека thread предоставляет возможность создания потоков с помощью класса std::thread и асинхронного вызова функций с помощью std::async.
+Очевидный способ - использовать стандартную библиотеку языка программирования C++~\cite{1cpp_base}. Библиотека thread предоставляет возможность создания потоков с помощью класса std::thread и асинхронного вызова функций с помощью std::async.
 
-Другим способом является технология \EN{OpenMP (Open Multi\hyp{}Processing)} — открытый стандарт для распараллеливания программ на языках C, C++ и Фортран. Стандарт предоставляет описание директив компилятора, библиотечных процедур и переменных окружения, которые предназначены для программирования многопоточных приложений на многопроцессорных системах с общей памятью. 
+Другим способом является технология \EN{OpenMP (Open Multi\hyp{}Processing)} — открытый стандарт для распараллеливания программ на языках C, C++ и Фортран\cite{2openmp}. Стандарт предоставляет описание директив компилятора, библиотечных процедур и переменных окружения, которые предназначены для программирования многопоточных приложений на многопроцессорных системах с общей памятью. 
 \refstepcounter{subsubsection}
 \subsubsection*{\thesubsubsection. Системы с распределенной памятью}
-Для таких систем характерно наличие собственной приватной памяти у каждого процессора. Примером такой системы может послужить суперкомпьютер: несколько отдельных компьютеров, соединенных в высокоскоростную сеть. Для обмена информации между процессорами используется специальный интерфейс -- \EN{Message Passing Interface} (MPI, интерфейс передачи сообщений). Интерфейс позволяет передавать сообщения между процессорами, а разделение работы происходит посредством определения номера процессора и исполнения соответствующего кода. На \cref{mpi_sample} можно увидеть пример работы с таким интерфейсом.
+Для таких систем характерно наличие собственной приватной памяти у каждого процессора. Примером такой системы может послужить суперкомпьютер: несколько отдельных компьютеров, соединенных в высокоскоростную сеть. Для обмена информации между процессорами используется специальный интерфейс -- \EN{Message Passing Interface} (MPI, интерфейс передачи сообщений)~\cite{2mpi}. Интерфейс позволяет передавать сообщения между процессорами, а разделение работы происходит посредством определения номера процессора и исполнения соответствующего кода. На \cref{mpi_sample} можно увидеть пример работы с таким интерфейсом.
 
 \begin{figure}[h]
   \lstinputlisting[language=c++]{source/mpi.cpp}
@@ -318,11 +398,10 @@ $f=f(x,y)$ - заданная функция.\\
 
 \begin{figure}[h]
   \lstinputlisting[language=c++]{source/boost_mpi.cpp}
-  \caption{Листинг. Использование Boost.MPI}
+  \caption{Листинг. Использование Boost.MPI~\cite{3boost}}
   \label{boost_mpi}
 \end{figure}
 
-\FloatBarrier
 Самое главное достоинство Boost.MPI в том, что она позволяет использовать библиотеку \EN{Boost.Serialization} для отправки сложных структур данных. Чтобы структура стала сериализуемой достаточно определить у нее метод \EN{serialize}, все остальное произойдет автоматически. Структуры из упомянутой ранее библиотеки \EN{Boost.uBLAS}, такие как матрицы и вектора, уже имеют этот метод, что сильно упрощает процедуру обмена строк, необходимую для реализации алгоритма.
 \FloatBarrier
 \refstepcounter{subsubsection}
@@ -343,10 +422,10 @@ $f=f(x,y)$ - заданная функция.\\
 Рассмотрим подробнее указанные выше протоколы RPC.
 \refstepcounter{subsubsection}
 \subsubsection*{\thesubsubsection. JSON-RPC}
-JSON-RPC — протокол удалённого вызова процедур, использующий формат JSON для кодирования сообщений. Это очень простой протокол, определяющий только несколько типов данных и команд, стандартизированный JSON-RPC Working Group. У него нет какой-либо официальной реализации - все детали зависят от разработчика.
+JSON-RPC — протокол удалённого вызова процедур, использующий формат JSON для кодирования сообщений. Это очень простой протокол, определяющий только несколько типов данных и команд, стандартизированный JSON-RPC Working Group~\cite{3jsonrpc}. У него нет какой-либо официальной реализации - все детали зависят от разработчика.
 \refstepcounter{subsubsection}
 \subsubsection*{\thesubsubsection. gRPC}
-gRPC - протокол RPC с открытым исходным кодом, разработанный компанией Google, в котором используется Protocol Buffers для сериализации данных (бинарный формат) и HTTP/2 в качестве протокола передачи данных. Код протокола является открытым, выложен на github и любой может его посмотреть и предложить свои изменения.
+gRPC - протокол RPC с открытым исходным кодом~\cite{3grpchabr}, разработанный компанией Google, в котором используется Protocol Buffers для сериализации данных (бинарный формат) и HTTP/2 в качестве протокола передачи данных. Код протокола является открытым, выложен на github и любой может его посмотреть и предложить свои изменения.
 \subsection{Сериализация данных}
 Сериализация - процесс перевода какой-либо структуры данных в последовательность битов. При RPC-вызове происходит сериализация данных, передача их по сети, а затем десериализация данных в формат, понятный программному обеспечению вызывающей стороны. Сериализация необходима из-за того, что нет никаких гарантий бинарной совместимости (ABI) сервера и клиента.
 \refstepcounter{subsubsection}
@@ -393,14 +472,14 @@ gRPC использует Protocol Buffers -- бинарный протокол 
 \end{table}
 
 Из такого файла имеется возможность сгенерировать исходный код для любого из поддерживаемых языков (C++, C\#, Java, Python, Go и т.д.), в которых описанные структуры будут представлены в виде классов с методами get и set для каждого из полей. Также стоит отметить, что для совместимости между различными системами имеется возможность конвертации как из protobuf\hyp{}структуры в JSON, так и наоборот.
-Полное описание языка proto3 можно прочитать в документации:\\ https://developers.google.com/protocol-buffers/docs/proto3
+Полное описание языка proto3 можно прочитать в документации~\cite{3protobuf}.
 \FloatBarrier
 \refstepcounter{subsubsection}
 \subsubsection*{\thesubsubsection. Сравнение производительности}
 Какой же из двух форматов быстрее и компактнее сериализует данные? На \cref{proto_vs_json} приведены сравнительные графики производительности описанных выше протоколов.
 \begin{figure}[H]
 	\center{\includegraphics[width=1\linewidth]{proto_vs_json}}
-  \caption{Сравнение скорости сериализации и размера сериализованных данных}
+  \caption{Сравнение скорости сериализации и размера сериализованных данных~\cite{3benchmark}}
   \label{proto_vs_json}
 \end{figure}
 
@@ -422,10 +501,10 @@ JSON-RPC имеет множество реализаций с использо�
 HTTP/2 - вторая крупная версия сетевого протокола HTTP. Протокол является бинарным, что позволяет уменьшит размер пакета по сравнению с HTTP/1. Также изменены способы разбиения данных на фрагменты и транспортирования их между сервером и клиентом, что ускоряет передачу данных. Пример работы протокола представлен на \cref{http2}.
 \begin{figure}[h]
 	\center{\includegraphics[width=1\linewidth]{http2}}
-  \caption{Протокол HTTP/2}
+  \caption{Протокол HTTP/2~\cite{3http}}
   \label{http2}
 \end{figure}
-В HTTP/2 сервер имеет право послать то содержимое, которое ещё не было запрошено клиентом. Это позволит серверу сразу выслать дополнительные файлы, которые потребуются браузеру для отображения страниц, без необходимости анализа браузером основной страницы и запроса необходимых дополнений.
+В HTTP/2 сервер имеет право послать то содержимое, которое ещё не было запрошено клиентом. Это позволит серверу сразу выслать дополнительные файлы, которые потребуются браузеру для отображения страниц, без необходимости анализа браузером основной страницы и запроса необходимых дополнений~\cite{3http}.
 
 \FloatBarrier
 gRPC также обладает возможностью включить TLS-шифрование для передаваемых пакетов. TLS даёт возможность клиент-серверным приложениям осуществлять связь в сети таким образом, что нельзя производить прослушивание пакетов и осуществить несанкционированный доступ.
@@ -487,7 +566,7 @@ gRPC также обладает возможностью включить TLS-�
 \label{grpc_template}
 \end{figure}
 
-Подробнее о таком формате можно прочитать в документации:\\ https://grpc.io/docs/guides/concepts/
+Подробнее о таком формате можно прочитать в документации~\cite{3grpc}.
 \begin{figure}[h]
   \lstinputlisting[language=protobuf3]{source/grpc.proto}
   \caption{Листинг. Описание интерфейса}
@@ -540,7 +619,7 @@ RPC-сервер и реализация численной модели пре�
 
 Существует множество библиотек IPC, например, \EN{Boost.IPC, Microsoft-IPC, RabbitMQ} и другие. Однако в нашем случае функционал данных библиотек может оказаться излишним, и их использование усложнит разработку. Поэтому было решено написать простое IPC для передачи результатов численного моделирования самостоятельно. Рассмотрим, какие средства для этого предоставляет операционная система.
 \subsection{Boost.Interprocess}
-Интерфейс для тех или иных механизмов межпроцессного взаимодействия, естественно, предоставляет операционная система. И этот интерфейс будет представлять из себя функции языка программирования C. В таких условиях сложно написать кроссплатформенный код: придется оборачивать каждую платформо-зависимую функцию в свою, а на этапе компиляции выбирать реализацию. И тут нам пригодится еще одна библиотека Boost - Boost.Interprocess. Эта библиотека как раз предоставляет такие обертки над интерфейсом операционной системой, представленные в виде C++-классов, что сильно упрощает дальнейшую разработку. Все описанные далее способы межпроцессного взаимодействия будут проиллюстрированы с использованием этой библиотеки.
+Интерфейс для тех или иных механизмов межпроцессного взаимодействия, естественно, предоставляет операционная система. И этот интерфейс будет представлять из себя функции языка программирования C. В таких условиях сложно написать кроссплатформенный код: придется оборачивать каждую платформо-зависимую функцию в свою, а на этапе компиляции выбирать реализацию. И тут нам пригодится еще одна библиотека Boost - Boost.Interprocess~\cite{3boost}. Эта библиотека как раз предоставляет такие обертки над интерфейсом операционной системой, представленные в виде C++-классов, что сильно упрощает дальнейшую разработку. Все описанные далее способы межпроцессного взаимодействия будут проиллюстрированы с использованием этой библиотеки.
 \subsection{Общая память процессов}
 Как известно, во всех наиболее распространенных операционных системах память каждого процесса изолирована от другого. Один процесс не может ни читать, ни тем более писать в память другого процесса. Это сделано прежде всего из-за соображений безопасности. Однако операционная система предоставляет механизм создания общей памяти, которой смогут пользоваться несколько процессов. Пример работы с такой памятью представлен на \cref{shared_memory}.
 \begin{figure}[H]
@@ -549,7 +628,7 @@ RPC-сервер и реализация численной модели пре�
   \label{shared_memory}
 \end{figure}
 
-Однако механизм работы с общей памятью имеет множество недостатков. Во-первых, необходимо отображать общую память в память процесса, дабы она оказалось оказалось в его адресном пространстве и процесс смог получить к ней доступ (memory mapping). Во-вторых, семантика общей памяти может сильно отличаться между операционными системами, как, например, между Windows и POSIX-совместимыми системами. Это накладывает определенные расходы в ОС Windows для эмуляции семантики POSIX, чтобы код мог называться кроссплатформенным. В-третьих, необходимо использовать межпроцессные объекты синхронизации, что влечет за собой большие накладные расходы.
+Однако механизм работы с общей памятью имеет множество недостатков. Во-первых, необходимо отображать общую память в память процесса, дабы она оказалось оказалось в его адресном пространстве и процесс смог получить к ней доступ (memory mapping). Во-вторых, семантика общей памяти может сильно отличаться между операционными системами, как, например, между Windows и POSIX-совместимыми системами~\cite{2ipc}. Это накладывает определенные расходы в ОС Windows для эмуляции семантики POSIX, чтобы код мог называться кроссплатформенным. В-третьих, необходимо использовать межпроцессные объекты синхронизации, что влечет за собой большие накладные расходы.
 \subsection{Канал}
 Другим механизмом межпроцессного взаимодействия является канал (англ. \EN{pipe}). Через канал процессы могут обмениваться данными. Семантика такова, что один процесс использует канал для вывода данных, другой же процесс для ввода. Таким образом, реализуется стратегия FIFO (First In First Out, первым зашел -- первым вышел) -- данные в канале будут прочитаны в том же порядке, в котором они туда были записаны. Так можно легко организовывать цепочки процессов (\cref{chain}), когда вывод первого будет вводом второго, вывод второго -- ввод первого и т.д. Существуют именованные и неименованные каналы.
 \begin{figure}[H]
@@ -558,7 +637,7 @@ RPC-сервер и реализация численной модели пре�
   \label{chain}
 \end{figure}
 
-Неименованный канал всегда создается для каждого процесса. Доступ к нему имеют только процесс-владелец и связанные процессые (родительский и дочерний). При завершении процесса канал закрывается и выделенные под него ресурсы освобождаются. Примером неименованного канала может послужить стандартный поток вывода программы -- stdout. Подобные каналы часто при работе в коммандной строке операционной системы Linux, например, когда необходимо отфильтровать результаты поиска с помощью утилиты grep или посчитать количество строк с помощью программы wc (\cref{linux}).
+Неименованный канал всегда создается для каждого процесса. Доступ к нему имеют только процесс-владелец и связанные процессые (родительский и дочерний). При завершении процесса канал закрывается и выделенные под него ресурсы освобождаются. Примером неименованного канала может послужить стандартный поток вывода программы -- stdout. Подобные каналы часто при работе в коммандной строке операционной системы Linux~\cite{2ipc}, например, когда необходимо отфильтровать результаты поиска с помощью утилиты grep или посчитать количество строк с помощью программы wc (\cref{linux}).
 \begin{figure}[H]
 	\center{\includegraphics[width=0.5\linewidth]{anon_pipe}}
   \caption{Пример использования неименованного канала}
@@ -620,7 +699,7 @@ RPC-сервер и реализация численной модели пре�
 \subsection{Параллельный алгоритм в системах\\с распределенной памятью}
 Для построения алгоритма в системе с распределенной память прежде всего необходимо определить, каким образом процессоры будут распределять между собой подматрицы. Самый простой и очевидный способ -- пусть каждый отдельный блок рассчитывает отдельный процессор. Одна такой подход отвратителен с точки зрения производительности, так как большинство времени процессор будет простаивать, ожидая, пока левый и верхний соседи не завершат вычисления своей подматрицы.
 
-Исходя из того, что максимально возможное количество одновременно работающих процессоров равно максимальной длине волны, то логичным следует предположить следующий алгоритм: каждый процессор "движется" сначала по горизонтали, затем по вертикали (\cref{mpi_matrix}). Следующий процессор начинает вычисления сразу после того, как предыдущий процессор, находящийся выше/правее, закончил вычисления. Такой алгоритм позволит минимизировать количество пересылок граничных строк и столбцов и задействует только то количество вычислительных ресурсов, которое действительно необходимо.
+Исходя из того, что максимально возможное количество одновременно работающих процессоров равно максимальной длине волны, то логичным следует предположить следующий алгоритм: каждый процессор <<движется>> сначала по горизонтали, затем по вертикали (\cref{mpi_matrix}). Следующий процессор начинает вычисления сразу после того, как предыдущий процессор, находящийся выше/правее, закончил вычисления. Такой алгоритм позволит минимизировать количество пересылок граничных строк и столбцов и задействует только то количество вычислительных ресурсов, которое действительно необходимо.
 \begin{figure}[H]
 	\center{\includegraphics[width=0.5\linewidth]{mpi-matrix}}
   \caption{Распределение нагрузки на процессоры}
@@ -743,12 +822,12 @@ OpenMP предоставляет гораздо больше возможнос
   \label{cluster}
 \end{figure}
 \section{Межпроцессное взаимодействие}
-Перейдем к непосредственной реализации собственного IPC. При работе с неименованным каналом нам пригодятся еще несколько библиотек Boost -- Boost.Process и Boost.Asio. Рассмотрим, зачем они понадобились и что они из себя представляют.
+Перейдем к непосредственной реализации собственного IPC. При работе с неименованным каналом нам пригодятся еще несколько библиотек Boost -- Boost.Process и Boost.Asio~\cite{3boost}. Рассмотрим, зачем они понадобились и что они из себя представляют.
 \subsection{Boost.Process}
 Интерфейс работы с каналами и процессами сильно отличается в различных операционных системах. И здесь снова возникает проблема кросспатформенности создаваемой системы. Снова обратимся к библиотеке Boost. В ее составе есть Boost.Process -- библиотека, предоставляющая кроссплатформенный интерфейс для работы с процессами и каналами. Воспользуемся ей для создания дочернего процесса (в данном случае процесс численной модели будет являться дочерним по отношению к серверу удаленного вызова процедур) и для работы с неименованным каналом (\cref{boost_process}).
 \begin{figure}[H]
   \lstinputlisting[language=c++]{source/boost_process.cpp}
-  \caption{Листинг. Пример использования Boost.Process}
+  \caption{Листинг. Пример использования Boost.Process~\cite{3boost}}
   \label{boost_process}
 \end{figure}
 \subsection{Boost.Asio}
@@ -757,7 +836,7 @@ Boost.Process может осуществлять только синхронн�
 Альтернативой синхронному чтению является асинхронное. Оно позволяет читать из потока небольшими порциями, например, до определенного символа. Такой подход позволит получать данные о расчетах на каждом их шаге. Для осуществления такого подхода используем Boost.Asio -- библиотеку, преимущественно созданную для асинхронного сетевого взаимодействия. Однако для чтения из неименованного канала она также отлично подходит. Реализация асинхронного чтения потока вывода дочернего процесса представлена на \cref{boost_asio}.
 \begin{figure}[h]
   \lstinputlisting[language=c++]{source/boost_asio.cpp}
-  \caption{Листинг. Асинхронное чтение потока вывода дочернего процесса}
+  \caption{Листинг. Асинхронное чтение потока вывода дочернего процесса~\cite{3boost}}
   \label{boost_asio}
 \end{figure}
 
@@ -793,46 +872,46 @@ Boost.Process может осуществлять только синхронн�
 \begin{flushright}
   Приложение 1
 \end{flushright}
-%\chapter*{Исходный код реализации параллельного алгоритма Гаусса-Зейделя}
-%\addcontentsline{toc}{chapter}{Приложение 1. Исходный код реализации параллельного алгоритма Гаусса-Зейделя}
-%\lstinputlisting[language=c++, caption={Файл main.cpp}]{rpc-cluster/math/my/src/main.cpp}
+\chapter*{Исходный код реализации параллельного алгоритма Гаусса-Зейделя}
+\addcontentsline{toc}{chapter}{Приложение 1. Исходный код реализации параллельного алгоритма Гаусса-Зейделя}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл main.cpp}]{rpc-cluster/math/my/src/main.cpp}
 \newpage
 \begin{flushright}
   Приложение 2
 \end{flushright}
-%\chapter*{Исходный код сервера удаленного вызова процедур}
-%\addcontentsline{toc}{chapter}{Приложение 2. Исходный код сервера удаленного вызова процедур}
-%\lstinputlisting[language=protobuf3, caption={Файл cluster.proto}]{rpc-cluster/cluster.proto}
-%\lstinputlisting[language=c++, caption={Файл cluster.cpp}]{rpc-cluster/server_cpp/src/cluster.cpp}
-%\lstinputlisting[language=c++, caption={Файл ControlServiceImpl.cpp}]{rpc-cluster/server_cpp/src/ControlServiceImpl.cpp}
-%\lstinputlisting[language=c++, caption={Файл ControlServiceImpl.h}]{rpc-cluster/server_cpp/src/ControlServiceImpl.h}
-%\lstinputlisting[language=c++, caption={Файл FromChars.h}]{rpc-cluster/server_cpp/src/FromChars.h}
-%\lstinputlisting[language=c++, caption={Файл IOutputStream.h}]{rpc-cluster/server_cpp/src/IOutputStream.h}
-%\lstinputlisting[language=c++, caption={Файл ITaskManager.h}]{rpc-cluster/server_cpp/src/ITaskManager.h}
-%\lstinputlisting[language=c++, caption={Файл Logger.h}]{rpc-cluster/server_cpp/src/Logger.h}
-%\lstinputlisting[language=c++, caption={Файл OuputStreamAdapter.h}]{rpc-cluster/server_cpp/src/OuputStreamAdapter.h}
-%\lstinputlisting[language=c++, caption={Файл Point.h}]{rpc-cluster/server_cpp/src/Point.h}
-%\lstinputlisting[language=c++, caption={Файл RpcPointsStream.cpp}]{rpc-cluster/server_cpp/src/RpcPointsStream.cpp}
-%\lstinputlisting[language=c++, caption={Файл RpcPointsStream.h}]{rpc-cluster/server_cpp/src/RpcPointsStream.h}
-%\lstinputlisting[language=c++, caption={Файл RpcServer.cpp}]{rpc-cluster/server_cpp/src/RpcServer.cpp}
-%\lstinputlisting[language=c++, caption={Файл RpcServer.h}]{rpc-cluster/server_cpp/src/RpcServer.h}
-%\lstinputlisting[language=c++, caption={Файл SlurmTask.cpp}]{rpc-cluster/server_cpp/src/SlurmTask.cpp}
-%\lstinputlisting[language=c++, caption={Файл SlurmTask.h}]{rpc-cluster/server_cpp/src/SlurmTask.h}
-%\lstinputlisting[language=c++, caption={Файл SlurmTaskManager.cpp}]{rpc-cluster/server_cpp/src/SlurmTaskManager.cpp}
-%\lstinputlisting[language=c++, caption={Файл SlurmTaskManager.h}]{rpc-cluster/server_cpp/src/SlurmTaskManager.h}
-%\lstinputlisting[language=c++, caption={Файл StartTaskCall.cpp}]{rpc-cluster/server_cpp/src/StartTaskCall.cpp}
-%\lstinputlisting[language=c++, caption={Файл StartTaskCall.h}]{rpc-cluster/server_cpp/src/StartTaskCall.h}
-%\lstinputlisting[language=c++, caption={Файл SuspendResume.h}]{rpc-cluster/server_cpp/src/SuspendResume.h}
-%\lstinputlisting[language=c++, caption={Файл posix/SuspendResume.cpp}]{rpc-cluster/server_cpp/src/native/posix/SuspendResume.cpp}
-%\lstinputlisting[language=c++, caption={Файл windows/SuspendResume.cpp}]{rpc-cluster/server_cpp/src/native/windows/SuspendResume.cpp}
+\chapter*{Исходный код сервера удаленного вызова процедур}
+\addcontentsline{toc}{chapter}{Приложение 2. Исходный код сервера удаленного вызова процедур}
+\lstinputlisting[language=protobuf3, captionpos=t, framexleftmargin=3em, title={Файл cluster.proto}]{rpc-cluster/cluster.proto}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл cluster.cpp}]{rpc-cluster/server_cpp/src/cluster.cpp}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл ControlServiceImpl.cpp}]{rpc-cluster/server_cpp/src/ControlServiceImpl.cpp}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл ControlServiceImpl.h}]{rpc-cluster/server_cpp/src/ControlServiceImpl.h}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл FromChars.h}]{rpc-cluster/server_cpp/src/FromChars.h}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл IOutputStream.h}]{rpc-cluster/server_cpp/src/IOutputStream.h}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл ITaskManager.h}]{rpc-cluster/server_cpp/src/ITaskManager.h}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл Logger.h}]{rpc-cluster/server_cpp/src/Logger.h}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл OuputStreamAdapter.h}]{rpc-cluster/server_cpp/src/OuputStreamAdapter.h}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл Point.h}]{rpc-cluster/server_cpp/src/Point.h}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл RpcPointsStream.cpp}]{rpc-cluster/server_cpp/src/RpcPointsStream.cpp}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл RpcPointsStream.h}]{rpc-cluster/server_cpp/src/RpcPointsStream.h}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл RpcServer.cpp}]{rpc-cluster/server_cpp/src/RpcServer.cpp}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл RpcServer.h}]{rpc-cluster/server_cpp/src/RpcServer.h}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл SlurmTask.cpp}]{rpc-cluster/server_cpp/src/SlurmTask.cpp}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл SlurmTask.h}]{rpc-cluster/server_cpp/src/SlurmTask.h}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл SlurmTaskManager.cpp}]{rpc-cluster/server_cpp/src/SlurmTaskManager.cpp}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл SlurmTaskManager.h}]{rpc-cluster/server_cpp/src/SlurmTaskManager.h}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл StartTaskCall.cpp}]{rpc-cluster/server_cpp/src/StartTaskCall.cpp}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл StartTaskCall.h}]{rpc-cluster/server_cpp/src/StartTaskCall.h}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл SuspendResume.h}]{rpc-cluster/server_cpp/src/SuspendResume.h}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл posix/SuspendResume.cpp}]{rpc-cluster/server_cpp/src/native/posix/SuspendResume.cpp}
+\lstinputlisting[language=c++, captionpos=t, framexleftmargin=3em, title={Файл windows/SuspendResume.cpp}]{rpc-cluster/server_cpp/src/native/windows/SuspendResume.cpp}
 \newpage
 \begin{flushright}
   Приложение 3
 \end{flushright}
-%\chapter*{Исходный код графического клиента}
-%\addcontentsline{toc}{chapter}{Приложение 3. Исходный код графического клиента}
-%\lstinputlisting[language=python, caption={Файл client.py}]{rpc-cluster/client_python/client.py}
-%\lstinputlisting[language=xml, caption={Файл main\_window.ui}]{rpc-cluster/client_python/main_window.ui}
-%\lstinputlisting[language=python, caption={Файл param\_table.py}]{rpc-cluster/client_python/param_table.py}
-%\lstinputlisting[language=python, caption={Файл suspend\_button.py}]{rpc-cluster/client_python/suspend_button.py}
+\chapter*{Исходный код графического клиента}
+\addcontentsline{toc}{chapter}{Приложение 3. Исходный код графического клиента}
+\lstinputlisting[language=python, captionpos=t, framexleftmargin=3em, title={Файл client.py}]{rpc-cluster/client_python/client.py}
+\lstinputlisting[language=xml, captionpos=t, framexleftmargin=3em, title={Файл main\_window.ui}]{rpc-cluster/client_python/main_window.ui}
+\lstinputlisting[language=python, captionpos=t, framexleftmargin=3em, title={Файл param\_table.py}]{rpc-cluster/client_python/param_table.py}
+\lstinputlisting[language=python, captionpos=t, framexleftmargin=3em, title={Файл suspend\_button.py}]{rpc-cluster/client_python/suspend_button.py}
 \end{document}
