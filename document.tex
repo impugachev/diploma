@@ -11,7 +11,7 @@
   \geometry{right=1cm}
   \geometry{top=2cm}
   \geometry{bottom=2cm}
-  \geometry{headsep=7mm}
+  \geometry{headsep=\dimexpr 1cm - \headheight\relax} % 1cm минус высота шрифта
 
 \usepackage{fancyhdr}
   \fancypagestyle{plain}{
@@ -175,7 +175,9 @@
   \captionsetup[figure]{font=small}
 
 \usepackage{flafter}
+
 \usepackage{cleveref}
+
 \usepackage{placeins}
 
 \newcommand*\EmptyPage{\newpage\null\thispagestyle{empty}\newpage}
@@ -322,7 +324,7 @@ $f=f(x,y)$ - заданная функция.\\
 \begin{equation*}
   u_{ij}=\dfrac{u_{i-1,j}+u_{i+1,j}+u_{i,j-1}+u_{i,j+1}-h^2f_{ij}}{4}
 \end{equation*}
-Таким образом, задача сводится к решению системы линейных алгебраических уравнений
+Таким образом, задача сводится к решению системы линейных алгебраических уравнений.
 \subsection{Методы решения СЛАУ}
 Рассмотрим методы решения СЛАУ~\cite{1ustinov_math} и возможность их параллельной реализации.
 \refstepcounter{subsubsection}
@@ -756,7 +758,7 @@ RPC-сервер и реализация численной модели пре�
 \subsubsection*{\thesubsubsection. OpenMP}
 OpenMP предоставляет гораздо больше возможностей, нежели стандартная библиотека. С ее помощью очень просто реализовать векторизацию цикла, которая лежит в основе алгоритма. Реализация параллельного алгоритма Гаусса-Зейделя выглядит следующим образом (\cref{openmp}).
 
-\begin{figure}[h]
+\begin{figure}[H]
   \lstinputlisting[language=c++]{source/openmp.cpp}
   \caption{Листинг. Реализация параллельного алгоритма Гаусса-Зейделя на OpenMP}
   \label{openmp}
